@@ -6,7 +6,7 @@ st.set_page_config(page_title="AI Variance Analyst", page_icon="📊", layout="w
 st.title("📊 Intelligent Variance Analysis & Automated Commentary")
 st.caption("Instantly isolate budget deviations and generate automated management briefs—No API key required.")
 
-# 2. Mathematical Data Generation (No hardcoded lists to prevent errors)
+# 2. Automated Financial Data Definition
 items = [
     "Revenue - North America", 
     "Revenue - Europe", 
@@ -16,9 +16,8 @@ items = [
     "Office Rent"
 ]
 
-# Generate mock data purely through math formulas
-budget_vals = [500000, 300000, 400000, 75000, 120000, 50000]
-actual_vals = [540000, 260000, 425000, 70000, 120000, 50000]
+budget_vals = [500000, 300000, 200000, 50000, 120000, 30000]
+actual_vals = [540000, 280000, 215000, 48000, 120000, 30000]
 
 df = pd.DataFrame({
     "Line Item": items,
@@ -52,10 +51,13 @@ with col2:
     st.subheader("🚨 Material Deviations")
     st.write(f"Items exceeding the **{pct_threshold}%** threshold:")
     for _, row in material_df.iterrows():
+        # Cleaned up HTML styling to fix the TypeError completely
         color = "green" if row["Variance ($)"] >= 0 else "red"
         if "Cost" in row["Line Item"] or "Expense" in row["Line Item"]:
             color = "red" if row["Variance ($)"] >= 0 else "green"
-        st.markdown(f"**{row['Line Item']}**: <span style='color:{color}'>{row['Variance (%)']:.1f}%</span>", unsafe_with_html=True)
+            
+        percentage_text = f"{row['Variance (%)']:.1f}%"
+        st.markdown(f"**{row['Line Item']}**: :{color}[{percentage_text}]")
 
 # 5. Automated Intelligence Commentary Engine
 st.subheader("🤖 Automated Management Commentary")
