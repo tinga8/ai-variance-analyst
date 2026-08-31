@@ -6,11 +6,11 @@ st.set_page_config(page_title="AI Variance Analyst", page_icon="📊", layout="w
 st.title("📊 Intelligent Variance Analysis & Automated Commentary")
 st.caption("Instantly isolate budget deviations and generate automated management briefs—No API key required.")
 
-# 2. Setup Demo Data for Easy Testing
+# 2. Setup Demo Data for Easy Testing (FIXED DATA)
 demo_data = {
     "Line Item": ["Revenue - North America", "Revenue - Europe", "Cost of Goods Sold (COGS)", "Marketing Expenses", "R&D Salaries", "Office Rent"],
     "Budgeted ($)":,
-    "Actual ($)": [550000, 260000, 425000, 130000, 200000, 50000]
+    "Actual ($)": [540000, 260000, 215000, 45000, 120000, 30000]
 }
 df = pd.DataFrame(demo_data)
 
