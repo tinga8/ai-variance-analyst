@@ -6,22 +6,26 @@ st.set_page_config(page_title="AI Variance Analyst", page_icon="📊", layout="w
 st.title("📊 Intelligent Variance Analysis & Automated Commentary")
 st.caption("Instantly isolate budget deviations and generate automated management briefs—No API key required.")
 
-# 2. File Attachment Button (Sidebar)
+# 2. File Attachment Button (Supports CSV and Excel)
 st.sidebar.header("📁 Data Input")
-uploaded_file = st.sidebar.file_uploader("Upload your Budget vs Actual CSV", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("Upload Budget vs Actual (CSV or Excel)", type=["csv", "xlsx"])
 
 # 3. Data Processing Logic
+df = None
 if uploaded_file is not None:
     try:
-        # If the user uploads a custom CSV file, load it directly
-        df = pd.read_csv(uploaded_file)
-        st.sidebar.success("Custom CSV file loaded successfully!")
+        # Check if the file is an Excel sheet or a CSV
+        if uploaded_file.name.endswith('.xlsx'):
+            df = pd.read_excel(uploaded_file)
+        else:
+            df = pd.read_csv(uploaded_file)
+        st.sidebar.success("File loaded successfully!")
     except Exception as e:
         st.sidebar.error("Error reading file. Falling back to demo data.")
-        uploaded_file = None
+        df = None
 
 # Fallback: Generate safe default demo data if no user file is attached
-if uploaded_file is None:
+if df is None:
     items = [
         "Revenue - North America", 
         "Revenue - Europe", 
@@ -30,8 +34,8 @@ if uploaded_file is None:
         "R&D Salaries", 
         "Office Rent"
     ]
-    budget_vals = [100000, 80000, 50000, 20000, 35000, 12000]
-    actual_vals = [112000, 74000, 53000, 19000, 35000, 12000]
+    budget_vals = [500000, 300000, 400000, 80000, 150000, 50000]
+    actual_vals = [545000, 280000, 425000, 92000, 148000, 50000]
 
     df = pd.DataFrame({
         "Line Item": items,
@@ -40,7 +44,6 @@ if uploaded_file is None:
     })
 
 # 4. Core Calculations
-# Ensure required column headers exist before calculating
 required_cols = ["Line Item", "Budgeted ($)", "Actual ($)"]
 if all(col in df.columns for col in required_cols):
     df["Variance ($)"] = df["Actual ($)"] - df["Budgeted ($)"]
@@ -70,7 +73,7 @@ if all(col in df.columns for col in required_cols):
         if not material_df.empty:
             for _, row in material_df.iterrows():
                 color = "green" if row["Variance ($)"] >= 0 else "red"
-                if "Cost" in row["Line Item"] or "Expense" in row["Line Item"]:
+                if "Cost" in row["Line Item"] or "Expense" in row["Line Item"] or "Costs" in row["Line Item"] or "Payroll" in row["Line Item"]:
                     color = "red" if row["Variance ($)"] >= 0 else "green"
                     
                 percentage_text = f"{row['Variance (%)']:.1f}%"
@@ -87,7 +90,7 @@ if all(col in df.columns for col in required_cols):
             for _, row in material_df.iterrows():
                 item, var_pct, var_val = row["Line Item"], row["Variance (%)"], row["Variance ($)"]
                 is_revenue = "Revenue" in item or "Sales" in item
-                is_expense = "Cost" in item or "Expense" in item or "Rent" in item or "Salary" in item
+                is_expense = "Cost" in item or "Expense" in item or "Rent" in item or "Salary" in item or "Costs" in item or "Payroll" in item
                 
                 if is_revenue and var_pct > 0:
                     brief = f"🟢 **{item}** outpaced budget expectations by **{var_pct:.1f}%** (+${var_val:,.0f}). This favorable variance indicates stronger-than-anticipated market demand and improved sales conversion rates."
@@ -105,4 +108,4 @@ if all(col in df.columns for col in required_cols):
         else:
             st.success("All metrics are tracking beautifully within your budget thresholds. No commentary necessary!")
 else:
-    st.error("Uploaded CSV format is incorrect. Please ensure your columns are named exactly: 'Line Item', 'Budgeted ($)', and 'Actual ($)'.")
+    st.error("File format incorrect. Please ensure your sheet columns are named exactly: 'Line Item', 'Budgeted ($)', and 'Actual ($)'.")
