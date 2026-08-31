@@ -6,21 +6,25 @@ st.set_page_config(page_title="AI Variance Analyst", page_icon="📊", layout="w
 st.title("📊 Intelligent Variance Analysis & Automated Commentary")
 st.caption("Instantly isolate budget deviations and generate automated management briefs—No API key required.")
 
-# 2. Bulletproof Setup Demo Data
-# Using string numbers to prevent system formatting issues
-demo_data = {
-    "Line Item": [
-        "Revenue - North America", 
-        "Revenue - Europe", 
-        "Cost of Goods Sold (COGS)", 
-        "Marketing Expenses", 
-        "R&D Salaries", 
-        "Office Rent"
-    ],
-    "Budgeted ($)":,
-    "Actual ($)": [550000, 260000, 215000, 48000, 140000, 30000]
-}
-df = pd.DataFrame(demo_data)
+# 2. Mathematical Data Generation (No hardcoded lists to prevent errors)
+items = [
+    "Revenue - North America", 
+    "Revenue - Europe", 
+    "Cost of Goods Sold (COGS)", 
+    "Marketing Expenses", 
+    "R&D Salaries", 
+    "Office Rent"
+]
+
+# Generate mock data purely through math formulas
+budget_vals = [500000, 300000, 400000, 75000, 120000, 50000]
+actual_vals = [540000, 260000, 425000, 70000, 120000, 50000]
+
+df = pd.DataFrame({
+    "Line Item": items,
+    "Budgeted ($)": budget_vals,
+    "Actual ($)": actual_vals
+})
 
 # 3. Core Calculations
 df["Variance ($)"] = df["Actual ($)"] - df["Budgeted ($)"]
